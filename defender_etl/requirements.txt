@@ -1,0 +1,5 @@
+prismacloud_api
+direct-redis
+psycopg2-binary
+redis
+pandas

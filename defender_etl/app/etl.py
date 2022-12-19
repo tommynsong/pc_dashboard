@@ -31,6 +31,7 @@ RETENTION = 30
 
 
 def db_connect(params_dict):
+    """Creates and returns postgres connection"""
     conn = None
     try:
         conn = psycopg2.connect(**params_dict)
@@ -41,6 +42,7 @@ def db_connect(params_dict):
 
 
 def db_write(conn, sql):
+    """Uses received db connection and executes received sql"""
     cursor = conn.cursor()
     try:
         cursor.execute(sql)
@@ -55,6 +57,7 @@ def db_write(conn, sql):
 
 
 def db_read(conn, sql):
+    """Uses received db connection and executes received sql"""
     list = []
     cursor = conn.cursor()
     try:
@@ -68,6 +71,7 @@ def db_read(conn, sql):
 
 
 def df_to_db(conn, df, table):
+    """Writes dataframe to database table"""
     buffer = StringIO()
     df.to_csv(buffer, header=False, index=False)
     buffer.seek(0)

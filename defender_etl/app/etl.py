@@ -58,22 +58,22 @@ def db_write(conn, sql):
 
 def db_read(conn, sql):
     """Uses received db connection and executes received sql"""
-    list = []
+    q_list = []
     cursor = conn.cursor()
     try:
         cursor.execute(sql)
     except (Exception, psycopg2.DatabaseError) as msg:
         print("Error in db_read function:")
         sys.exit(msg)
-    list = cursor.fetchall()
+    q_list = cursor.fetchall()
     cursor.close()
-    return list
+    return q_list
 
 
-def df_to_db(conn, df, table):
+def df_to_db(conn, df_to_write, table):
     """Writes dataframe to database table"""
     buffer = StringIO()
-    df.to_csv(buffer, header=False, index=False)
+    df_to_write.to_csv(buffer, header=False, index=False)
     buffer.seek(0)
     cursor = conn.cursor()
     cursor.execute("SET search_path TO reporting")
@@ -95,6 +95,7 @@ def df_to_db(conn, df, table):
 
 
 def main():
+    """Main Function"""
     # Initate DB connection
     conn = db_connect(db_settings)
 
@@ -112,14 +113,15 @@ def main():
     db_write(conn, sql)
 
     # Build dataframe from defenders api endpoint
-    df = pd.DataFrame(pc_api.defenders_list_read("connected=true"))
+    df_defenders_api = pd.DataFrame(
+        pc_api.defenders_list_read("connected=true"))
 
     # Obtain current time and add to column in dataframe
     current_time = datetime.now()
     date_column = [current_time.strftime(
-        "%Y-%m-%d")] * len(df.index)
-    date_column = ['2022-12-17'] * len(df.index)
-    df['date_added'] = date_column
+        "%Y-%m-%d")] * len(df_defenders_api.index)
+    date_column = ['2022-12-17'] * len(df_defenders_api.index)
+    df_defenders_api['date_added'] = date_column
 
     # Purge old records from DB
     sql = ("DELETE FROM reporting.defenders * WHERE date_added::date < date \'" +
@@ -127,8 +129,8 @@ def main():
     db_write(conn, sql)
 
     # Copy df columns to Write df_defenders and write to defenders table
-    df_defenders = df[['hostname', 'version',
-                       'type', 'category', 'date_added']].copy()
+    df_defenders = df_defenders_api[['hostname', 'version',
+                                     'type', 'category', 'date_added']].copy()
     df_to_db(conn, df_defenders, "defenders")
 
     # Pull all historical defender stats, store as dataframe

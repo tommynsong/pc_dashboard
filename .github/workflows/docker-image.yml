@@ -1,0 +1,50 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Run Bridgecrew 
+      id: Bridgecrew
+      uses: bridgecrewio/bridgecrew-action@master
+      env:
+        PRISMA_API_URL: https://api4.prismacloud.io
+      with:
+        api-key: ${{ secrets.PCC_USER }}::${{ secrets.PCC_SECRET }}
+        #directory: "example/examplea"
+        #check: CKV_AWS_1 # optional: run only a specific check_id. can be comma separated list
+        #skip_check: CKV_AWS_1 # optional: skip a specific check_id. can be comma separated list
+        soft_fail: true
+        #framework: terraform # optional: run only on a specific infrastructure {cloudformation,terraform,kubernetes,all}
+        output_format: cli
+        quiet: false
+        external_checks_dirs: ./checkov
+        download_external_modules: true # optional: download external terraform modules from public git repositories and terraform registry
+        #log_level: DEBUG # optional: set log level. Default WARNING
+    - name: Build the Docker image
+      run: docker build ./pc-postgres/container/ --tag jtb75/pc_postgres:$(date +%y.%m.%d.%k) --tag jtb75/pc_postgres:latest
+    - name: Prisma Cloud image scan
+      id: scan
+      uses: PaloAltoNetworks/prisma-cloud-scan@v1
+      with:
+        pcc_console_url: ${{ secrets.PCC_CONSOLE_URL }}
+        pcc_user: ${{ secrets.PCC_USER }}
+        pcc_pass: ${{ secrets.PCC_SECRET }}
+        image_name: jtb75/pc_postgres:latest
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKERHUB_USER }}
+        password: ${{ secrets.DOCKERHUB_SECRET }}
+    - name: Publish the Docker image
+      run: docker push -a jtb75/pc_postgres

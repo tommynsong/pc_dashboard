@@ -4,15 +4,16 @@
 3. Pull historical stats from db and transfer in dataframe
 4. Load dataframe into redis for front-end reporting
 """
+
 import os
 import sys
 from io import StringIO
-from prismacloud.api import pc_api
 from datetime import timedelta
 from datetime import datetime
 import pandas as pd
-from direct_redis import DirectRedis
 import psycopg2
+from direct_redis import DirectRedis
+from prismacloud.api import pc_api
 
 
 pc_settings = {

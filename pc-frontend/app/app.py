@@ -1,13 +1,16 @@
+"""
+Multi-page setup for reporting
+"""
 import dash
 from dash import dcc
 import dash_mantine_components as dmc
 from dash_iconify import DashIconify
-import os
 
 app = dash.Dash(__name__, use_pages=True)
 
 
 def create_nav_link(icon, label, href):
+    """Set up navigation links"""
     return dcc.Link(
         dmc.Group(
             [

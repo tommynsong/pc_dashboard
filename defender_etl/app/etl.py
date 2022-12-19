@@ -1,12 +1,12 @@
 import os
-import psycopg2
+import sys
 from io import StringIO
 from prismacloud.api import pc_api
 from datetime import timedelta
 from datetime import datetime
 import pandas as pd
-import sys
 from direct_redis import DirectRedis
+import psycopg2
 
 
 pc_settings = {
@@ -141,8 +141,8 @@ def main():
             ['date_added', 'category', 'version'])['category'].count().reset_index(name='total')
 
     # Push defender dataframe to redis
-    r = DirectRedis(host='localhost', port=6379)
-    r.set('df_defenders', df_defenders)
+    redis_conn = DirectRedis(host='localhost', port=6379)
+    redis_conn.set('df_defenders', df_defenders)
 
     conn.close()
 

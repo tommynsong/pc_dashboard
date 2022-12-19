@@ -23,8 +23,7 @@ db_settings = {
 }
 
 pc_api.configure(pc_settings)
-verbose = True
-retention = 30
+RETENTION = 30
 
 #
 # Helpers
@@ -37,7 +36,7 @@ def db_connect(params_dict):
         conn = psycopg2.connect(**params_dict)
     except (Exception, psycopg2.DatabaseError) as msg:
         print("Error in db_connect function:")
-        exit(msg)
+        sys.exit(msg)
     return conn
 
 
@@ -49,7 +48,7 @@ def db_write(conn, sql):
         conn.rollback()
         cursor.close()
         print("Error in db_write function:")
-        exit(msg)
+        sys.exit(msg)
     conn.commit()
     cursor.close()
     return True
@@ -62,10 +61,10 @@ def db_read(conn, sql):
         cursor.execute(sql)
     except (Exception, psycopg2.DatabaseError) as msg:
         print("Error in db_read function:")
-        exit(msg)
+        sys.exit(msg)
     list = cursor.fetchall()
     cursor.close()
-    return (list)
+    return list
 
 
 def df_to_db(conn, df, table):
@@ -120,7 +119,7 @@ def main():
 
     # Purge old records from DB
     sql = ("DELETE FROM reporting.defenders * WHERE date_added::date < date \'" +
-           ((current_time - timedelta(days=retention)).strftime('%Y-%m-%d')) + "\';")
+           ((current_time - timedelta(days=RETENTION)).strftime('%Y-%m-%d')) + "\';")
     db_write(conn, sql)
 
     # Copy df columns to Write df_defenders and write to defenders table

@@ -1,3 +1,9 @@
+"""
+1. Extract defender statistics from PC console
+2. Update postgres with historical defender stats
+3. Pull historical stats from db and transfer in dataframe
+4. Load dataframe into redis for front-end reporting
+"""
 import os
 import sys
 from io import StringIO

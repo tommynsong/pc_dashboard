@@ -1,16 +1,13 @@
-"""
-Multi-page setup for reporting
-"""
 import dash
-from dash import dcc
+from dash import dcc, html, Output, Input, State
 import dash_mantine_components as dmc
 from dash_iconify import DashIconify
+
 
 app = dash.Dash(__name__, use_pages=True)
 
 
 def create_nav_link(icon, label, href):
-    """Set up navigation links"""
     return dcc.Link(
         dmc.Group(
             [
@@ -30,7 +27,7 @@ def create_nav_link(icon, label, href):
 
 sidebar = dmc.Navbar(
     fixed=True,
-    width={"base": 300},
+    width={"base": 200},
     position={"top": 80},
     height=300,
     children=[
@@ -39,8 +36,6 @@ sidebar = dmc.Navbar(
             type="scroll",
             children=[
                 dmc.Group(
-                    #direction="column",
-                    align="left",
                     children=[
                         create_nav_link(
                             icon="radix-icons:rocket",
@@ -50,31 +45,27 @@ sidebar = dmc.Navbar(
                     ],
                 ),
                 dmc.Divider(
-                    label="Defenders", style={"marginBottom": 20, "marginTop": 20}
+                    label="Chapter 1", style={"marginBottom": 20, "marginTop": 20}
                 ),
                 dmc.Group(
-                    #direction="column",
-                    align="left",
                     children=[
                         create_nav_link(
                             icon=page["icon"], label=page["name"], href=page["path"]
                         )
                         for page in dash.page_registry.values()
-                        if page["path"].startswith("/defenders")
+                        if page["path"].startswith("/chapter1")
                     ],
                 ),
                 dmc.Divider(
-                    label="Vulnerabilities", style={"marginBottom": 20, "marginTop": 20}
+                    label="Chapter 2", style={"marginBottom": 20, "marginTop": 20}
                 ),
                 dmc.Group(
-                    #direction="column",
-                    align="left",
                     children=[
                         create_nav_link(
                             icon=page["icon"], label=page["name"], href=page["path"]
                         )
                         for page in dash.page_registry.values()
-                        if page["path"].startswith("/vulnerabilities")
+                        if page["path"].startswith("/chapter2")
                     ],
                 ),
             ],
@@ -86,7 +77,12 @@ app.layout = dmc.Container(
     [
         dmc.Header(
             height=70,
-            children=[dmc.Text("Compute Custom Reporting")],
+            #children=[dmc.Text("Company Logo")],
+            children=[
+                dmc.Image(
+                    src="/assets/PrismaCloud.svg", alt="PrismaCloud", caption="PrismaCloud Logo", width=120
+                )
+            ],
             style={"backgroundColor": "#228be6"},
         ),
         sidebar,

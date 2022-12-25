@@ -3,6 +3,7 @@ Builds reporting graph showing deployed defenders over time
 """
 from dash import dcc, html, Input, Output, callback, register_page
 import dash_mantine_components as dmc
+import pandas
 import plotly.express as px
 import numpy
 from direct_redis import DirectRedis

@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 env:
-  TAG: 0.1
+  TAG: ${{ steps.date.outputs.date }}
 jobs:
 
   build:

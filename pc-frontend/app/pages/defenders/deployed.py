@@ -1,7 +1,9 @@
+"""
+Builds reporting graph showing deployed defenders over time
+"""
 from dash import dcc, html, Input, Output, callback, register_page
 import dash_mantine_components as dmc
 import plotly.express as px
-import pandas as pd
 import numpy
 from direct_redis import DirectRedis
 
@@ -10,8 +12,8 @@ register_page(__name__, icon="fa:bar-chart")
 # df2 = df.groupby(['date_added', 'category', 'version'])[
 #    'category'].count().reset_index(name='total')
 
-r = DirectRedis(host='localhost', port=6379)
-df2 = r.get('df_defenders')
+redis_conn = DirectRedis(host='localhost', port=6379)
+df2 = redis_conn.get('df_defenders')
 versions = df2.version.unique()
 versions = numpy.insert(versions, 0, 'all')
 
@@ -30,6 +32,7 @@ layout = html.Div(
 
 @callback(Output("deployed", "figure"), Input("dropdown", "value"))
 def update_bar_chart(version):
+    """Receives dropdown slection and applies filter to dataframe"""
     if version == 'all':
         mask = df2["version"] != version
     else:

@@ -1,4 +1,5 @@
 CREATE DATABASE prisma;
+
 CREATE USER prisma with encrypted password 'prisma';
 GRANT ALL PRIVILEGES ON DATABASE prisma TO prisma;
 

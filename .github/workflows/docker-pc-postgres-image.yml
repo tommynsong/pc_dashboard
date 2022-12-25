@@ -24,9 +24,9 @@ jobs:
     - name: Build the Docker image
       working-directory: ./pc-postgres/container
       run: |
-        echo $NOW
-        docker build . --file Dockerfile --tag jtb75/pc-postgres:latest
+        docker build . --file Dockerfile --tag jtb75/pc-postgres:$NOW
+        docekr tag jtb75/pc-postgres:$NOW jtb75/pc-postgres:latest
     - name: Push the Docker image
       run: |
-        echo $NOW
         docker push jtb75/pc-postgres:latest
+        docker push jtb75/pc-postgres:$NOW

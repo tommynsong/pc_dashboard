@@ -26,7 +26,7 @@ jobs:
       working-directory: ./pc-postgres/container
       run: |
         docker build . --file Dockerfile --tag jtb75/pc-postgres:$TAG --tag jtb75/pc-postgres:latest
-        echo "MY_DATE=2020-10-07T12:00:00+01:00" >> $GITHUB_ENV
+        echo "MY_DATE=`date`" >> $GITHUB_ENV
     - name: Push the Docker image
       run: |
         docker push jtb75/pc-postgres:$TAG

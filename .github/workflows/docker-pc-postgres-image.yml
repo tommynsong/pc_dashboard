@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [ "main" ]
 env:
-  TAG: ('date')
+  TAG: ${{ github.event.repository.updated_at}}
 
 jobs:
 

@@ -21,6 +21,7 @@ jobs:
       run: |
         docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
     - name: Build the Docker image
-      run: docker build ./pc-postgres/container --file Dockerfile --tag jtb75/pc-postgres:$(date +%s)
+      working-directory: ./pc-postgres/container
+      run: docker build . --file Dockerfile --tag jtb75/pc-postgres:$(date +%s)
     - name: Push the Docker image
       run: docker push jtb75/pc-postgres:$(date +%s)

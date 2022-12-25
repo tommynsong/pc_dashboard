@@ -21,8 +21,9 @@ jobs:
       run: |
         docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
         export TAG=${{steps.date.outputs.date}}
+        echo "::set-env name=TAG::$TAG"
     - name: Print Tags
-      run: env
+      run: echo $TAG
     - name: Build the Docker image
       working-directory: ./pc-postgres/container
       run: docker build . --file Dockerfile --tag jtb75/pc-postgres:latest

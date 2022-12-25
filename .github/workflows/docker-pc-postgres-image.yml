@@ -18,11 +18,12 @@ jobs:
       env:
         DOCKER_USER: ${{secrets.DOCKERHUB_USER}}
         DOCKER_PASSWORD: ${{secrets.DOCKERHUB_SECRET}}
-        TAG: ${{date +%s}}
+        TAG: ${{steps.date.outputs.date}}
       run: |
         docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+        echo $TAG
     - name: Build the Docker image
       working-directory: ./pc-postgres/container
-      run: docker build . --file Dockerfile --tag jtb75/pc-postgres:$TAG
+      run: docker build . --file Dockerfile --tag jtb75/pc-postgres:latest
     - name: Push the Docker image
-      run: docker push jtb75/pc-postgres:$TAG
+      run: docker push jtb75/pc-postgres:latest

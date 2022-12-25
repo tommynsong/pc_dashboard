@@ -21,7 +21,8 @@ jobs:
         TAG: ${{steps.date.outputs.date}}
       run: |
         docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-        echo $TAG
+    - name: Print Tags
+      run: env
     - name: Build the Docker image
       working-directory: ./pc-postgres/container
       run: docker build . --file Dockerfile --tag jtb75/pc-postgres:latest

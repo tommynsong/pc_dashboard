@@ -18,7 +18,7 @@ jobs:
       env:
         DOCKER_USER: ${{secrets.DOCKERHUB_USER}}
         DOCKER_PASSWORD: ${{secrets.DOCKERHUB_SECRET}}
-        TAG: $(date +%s)
+        TAG: ${{date +%s}}
       run: |
         docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
     - name: Build the Docker image

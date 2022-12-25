@@ -19,11 +19,11 @@ jobs:
         DOCKER_USER: ${{ secrets.DOCKERHUB_USER }}
         DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_SECRET }}
       run: |
+        echo "NOW=$(date +'%Y-%m-%dT%H:%M:%S')" >> $GITHUB_ENV
         docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
     - name: Build the Docker image
       working-directory: ./pc-postgres/container
       run: |
-        echo "NOW=$(date +'%Y-%m-%dT%H:%M:%S')" >> $GITHUB_ENV
         echo $NOW
         docker build . --file Dockerfile --tag jtb75/pc-postgres:latest
     - name: Push the Docker image

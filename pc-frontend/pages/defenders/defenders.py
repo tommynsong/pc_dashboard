@@ -3,7 +3,7 @@ Builds reporting graph showing deployed defenders over time
 """
 from dash import dcc, html, Input, Output, callback, register_page
 import dash_mantine_components as dmc
-import pandas
+import pandas as pd
 import plotly.express as px
 import numpy
 from direct_redis import DirectRedis
@@ -14,6 +14,7 @@ redis_conn = DirectRedis(host='localhost', port=6379)
 df2 = redis_conn.get('df_defenders')
 all_versions = df2.version.unique()
 all_accounts = df2.accountID.unique()
+all_categories = df2.category.unique()
 
 layout = html.Div(
     [
@@ -21,17 +22,23 @@ layout = html.Div(
         dmc.MultiSelect(
             id="accounts",
             placeholder="All",
-            value=all_accounts[0],
             data=[{"value": x, "label": x} for x in all_accounts],
             clearable=True,
         ),
         dmc.Space(h=20),
         dmc.Text("Versions:"),
         dmc.MultiSelect(
-            id="values",
+            id="versions",
             placeholder="All",
-            value=all_versions[0],
             data=[{"value": x, "label": x} for x in all_versions],
+            clearable=True,
+        ),
+        dmc.Space(h=20),
+        dmc.Text("Category:"),
+        dmc.MultiSelect(
+            id="categories",
+            placeholder="All",
+            data=[{"value": x, "label": x} for x in all_categories],
             clearable=True,
         ),
         dcc.Graph(id="deployed"),
@@ -39,15 +46,28 @@ layout = html.Div(
 )
 
 
-@callback(Output("deployed", "figure"), [Input("accounts", "value"), Input("versions", "value")])
-def update_bar_chart(accounts, versions):
-    """Receives dropdown slection and applies filter to dataframe"""
-    print(versions)
-    if versions == 'all':
-        mask = df2["version"] != versions
+@callback(Output("deployed", "figure"),
+          Input("accounts", "value"),
+          Input("versions", "value"),
+          Input("categories", "value"),
+          )
+def update_bar_chart(accounts, versions, categories):
+    """Receives multiselect and applies filter to dataframe"""
+    if accounts == None or len(accounts) == 0:
+        accounts = []
+        account_mask = ~df2["accountID"].isin(accounts)
     else:
-        mask = df2["version"] == versions
-        print(df2[mask])
-    fig = px.bar(df2[mask], x="date_added", y="total",
+        account_mask = df2["accountID"].isin(accounts)
+    if versions == None or len(versions) == 0:
+        versions = []
+        version_mask = ~df2["version"].isin(versions)
+    else:
+        version_mask = df2["version"].isin(versions)
+    if categories == None or len(categories) == 0:
+        categories = []
+        category_mask = ~df2["category"].isin(categories)
+    else:
+        category_mask = df2["category"].isin(categories)
+    fig = px.bar(df2[(account_mask & version_mask & category_mask)], x="date_added", y="total",
                  color="category", barmode="stack")
     return fig

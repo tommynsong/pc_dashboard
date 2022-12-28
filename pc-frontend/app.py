@@ -29,7 +29,7 @@ sidebar = dmc.Navbar(
     fixed=True,
     width={"base": 200},
     position={"top": 80},
-    height=300,
+    height=600,
     children=[
         dmc.ScrollArea(
             offsetScrollbars=True,
@@ -45,7 +45,7 @@ sidebar = dmc.Navbar(
                     ],
                 ),
                 dmc.Divider(
-                    label="Chapter 1", style={"marginBottom": 20, "marginTop": 20}
+                    label="Defenders", style={"marginBottom": 20, "marginTop": 20}
                 ),
                 dmc.Group(
                     children=[
@@ -53,7 +53,7 @@ sidebar = dmc.Navbar(
                             icon=page["icon"], label=page["name"], href=page["path"]
                         )
                         for page in dash.page_registry.values()
-                        if page["path"].startswith("/chapter1")
+                        if page["path"].startswith("/defenders")
                     ],
                 ),
                 dmc.Divider(
@@ -77,7 +77,6 @@ app.layout = dmc.Container(
     [
         dmc.Header(
             height=70,
-            #children=[dmc.Text("Company Logo")],
             children=[
                 dmc.Image(
                     src="/assets/PrismaCloud.svg", alt="PrismaCloud", caption="PrismaCloud Logo", width=120

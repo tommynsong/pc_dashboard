@@ -113,44 +113,49 @@ def main():
         version varchar (9) NOT NULL,
         type varchar (24) NOT NULL,
         category varchar (24) NOT NULL,
+        connected varchar (24) NOT NULL,
+        accountID varchar (32) NOT NULL,
         date_added DATE NOT NULL
     );
     GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA reporting TO prisma;
     '''
     db_write(conn, sql)
 
-    # Build dataframe from defenders api endpoint
-    df_defenders_api = pd.DataFrame(
-        pc_api.defenders_list_read("connected=true"))
-
     # Obtain current time and add to column in dataframe
     current_time = datetime.now()
-    date_column = [current_time.strftime(
-        "%Y-%m-%d")] * len(df_defenders_api.index)
-    date_column = ['2022-12-17'] * len(df_defenders_api.index)
-    df_defenders_api['date_added'] = date_column
+    date_added = [current_time.strftime("%Y-%m-%d")]
+    date_added = "2022-12-25"
+
+    # Build dataframe from defenders api endpoint
+    defenders_api_lod = pc_api.defenders_list_read('connected=true')
+    df_defenders = pd.DataFrame(
+        columns=['hostname', 'version', 'type', 'category', 'connected', 'accountID', 'date_added'])
+    for defender in defenders_api_lod:
+        if 'accountID' not in defender['cloudMetadata']:
+            defender['cloudMetadata']['accountID'] = 'aws'
+        df_defenders.loc[len(df_defenders.index)] = [
+            defender['hostname'], defender['version'], defender['type'], defender['category'],
+            defender['connected'], defender['cloudMetadata']['accountID'], date_added
+        ]
 
     # Purge old records from DB
     sql = ("DELETE FROM reporting.defenders * WHERE date_added::date < date \'" +
            ((current_time - timedelta(days=RETENTION)).strftime('%Y-%m-%d')) + "\';")
     db_write(conn, sql)
 
-    # Copy df columns to Write df_defenders and write to defenders table
-    df_defenders = df_defenders_api[['hostname', 'version',
-                                     'type', 'category', 'date_added']].copy()
+    # Write df to defenders table
     df_to_db(conn, df_defenders, "defenders")
 
     # Pull all historical defender stats, store as dataframe
-    sql = ("SELECT category, date_added, version FROM reporting.defenders")
+    sql = ("SELECT category, date_added, version, connected, accountID FROM reporting.defenders")
     data_list = db_read(conn, sql)
     df_defenders = pd.DataFrame(
-        data_list, columns=['category', 'date_added', 'version']).groupby(
-            ['date_added', 'category', 'version'])['category'].count().reset_index(name='total')
+        data_list, columns=['category', 'date_added', 'version', 'connected', 'accountID']).groupby(
+            ['date_added', 'category', 'version', 'connected', 'accountID'])['category'].count().reset_index(name='total')
 
     # Push defender dataframe to redis
     redis_conn = DirectRedis(host='localhost', port=6379)
     redis_conn.set('df_defenders', df_defenders)
-
     conn.close()
 
 

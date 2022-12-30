@@ -5,43 +5,22 @@ register_page(__name__, path="/", icon="fa-solid:home")
 
 layout = dmc.Container(
     [
-        dmc.Title("Welcome to the home page"),
+        dmc.Title("Welcome to the Prisma Cloud Reporting page"),
         dcc.Markdown(
             """
-            This is a demo of a multi-page app with nested folders in the `pages` folder.  
+            Fun with Prisma Cloud APIs and Flask.
             
-            For example:            
+            Report Breakdown:
             ```
-            - app.py 
-            - pages
-                - chapter1                  
-                   |-- page1.py
-                   |-- page2.py
-                - chapter2                   
-                   |-- page1.py
-                   |-- page2.py    
-                - home.py        
-            ```
-                        
-            This app also demos how to add arbitrary data to the `page_registry`.  This example adds icons to the `page_registry`
-            
-            ```
-            dash.register_page(__name__, icon="fa:bar-chart")
-            
+            - Home
+            - Defenders
+                |-- Coverage   # Shows current deployed Defenders and Coverage Gaps
+                |-- Deployed   # Shows current Defender deployment by version, type, and account
+            - Vulnerabilities
+                |-- Registries # Shows historical vulnerability details by Repo and tag within Registries
             ```
             
-            In `app.py` we loop through `dash.page_registry` to create the links:
-            
-            ```
-                    children=[
-                        create_nav_link(
-                            icon=page["icon"], label=page["name"], href=page["path"]
-                        )
-                        for page in dash.page_registry.values()
-                        if page["path"].startswith("/chapter2")
-                    ],
-            ``` 
-            
+            Offered without warranty.
             """
         ),
     ]

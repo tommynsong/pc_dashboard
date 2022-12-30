@@ -124,7 +124,7 @@ def main():
     # Obtain current time and add to column in dataframe
     current_time = datetime.now()
     date_added = [current_time.strftime("%Y-%m-%d")]
-    date_added = "2022-12-25"
+    date_added = "2022-12-30"
 
     # Build dataframe from defenders api endpoint
     defenders_api_lod = pc_api.defenders_list_read('connected=true')
@@ -149,13 +149,17 @@ def main():
     # Pull all historical defender stats, store as dataframe
     sql = ("SELECT category, date_added, version, connected, accountID FROM reporting.defenders")
     data_list = db_read(conn, sql)
+    df_all_defenders = pd.DataFrame(
+        data_list, columns=['category', 'date_added', 'version', 'connected', 'accountID'])
     df_defenders = pd.DataFrame(
         data_list, columns=['category', 'date_added', 'version', 'connected', 'accountID']).groupby(
             ['date_added', 'category', 'version', 'connected', 'accountID'])['category'].count().reset_index(name='total')
 
     # Push defender dataframe to redis
     redis_conn = DirectRedis(host='localhost', port=6379)
+    redis_conn.set('df_all_defenders', df_all_defenders)
     redis_conn.set('df_defenders', df_defenders)
+
     conn.close()
 
 

@@ -1,10 +1,14 @@
 import dash
-from dash import dcc, html, Output, Input, State
+from dash import dcc
 import dash_mantine_components as dmc
 from dash_iconify import DashIconify
+import dash_auth
 
+VALID_USERNAME_PASSWORD_PAIRS = {"hello": "world"}
 
 app = dash.Dash(__name__, use_pages=True)
+
+auth = dash_auth.BasicAuth(app, VALID_USERNAME_PASSWORD_PAIRS)
 
 
 def create_nav_link(icon, label, href):
@@ -57,7 +61,7 @@ sidebar = dmc.Navbar(
                     ],
                 ),
                 dmc.Divider(
-                    label="Chapter 2", style={"marginBottom": 20, "marginTop": 20}
+                    label="Vulnerabilities", style={"marginBottom": 20, "marginTop": 20}
                 ),
                 dmc.Group(
                     children=[
@@ -65,7 +69,7 @@ sidebar = dmc.Navbar(
                             icon=page["icon"], label=page["name"], href=page["path"]
                         )
                         for page in dash.page_registry.values()
-                        if page["path"].startswith("/chapter2")
+                        if page["path"].startswith("/vulnerabilities")
                     ],
                 ),
             ],

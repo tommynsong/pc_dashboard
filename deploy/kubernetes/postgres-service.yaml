@@ -1,0 +1,14 @@
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: historical-db # Sets service name
+  labels:
+    app: historical-db # Labels and Selectors
+spec:
+  type:  ClusterIP # Sets service type
+  ports:
+    - port: 5432 # Sets port to run the postgres application
+  selector:
+    app: historical-db
+

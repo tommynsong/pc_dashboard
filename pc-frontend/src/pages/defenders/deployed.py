@@ -10,7 +10,7 @@ from direct_redis import DirectRedis
 
 register_page(__name__, icon="fa:bar-chart")
 
-redis_conn = DirectRedis(host='localhost', port=6379)
+redis_conn = DirectRedis(host='cache', port=6379)
 df = redis_conn.get('df_all_defenders')
 all_versions = numpy.sort(df.version.unique())
 all_accounts = numpy.sort(df.accountID.unique())

@@ -17,7 +17,7 @@ spec:
           image: jtb75/pc-cache:latest
           imagePullPolicy: "Always"
           ports:
-            - containerPort: 8050  # Exposes container port
+            - containerPort: 6379  # Exposes container port
           envFrom:
             - configMapRef:
                 name: historical-db-config
@@ -31,6 +31,6 @@ metadata:
 spec:
   type:  ClusterIP # Sets service type
   ports:
-    - port: 8050 
+    - port: 6379 
   selector:
-    app: frontend
+    app: cache

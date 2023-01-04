@@ -17,10 +17,7 @@ spec:
           image: jtb75/pc-frontend:latest
           imagePullPolicy: "Always"
           ports:
-            - containerPort: 6379  # Exposes container port
-          envFrom:
-            - configMapRef:
-                name: historical-db-config
+            - containerPort: 8050  # Exposes container port
 ---
 apiVersion: v1
 kind: Service
@@ -31,6 +28,25 @@ metadata:
 spec:
   type:  ClusterIP # Sets service type
   ports:
-    - port: 6379 
+    - port: 8050 
   selector:
     app: frontend
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: frontend
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths:
+        - path: /dashboard
+          pathType: Prefix
+          backend:
+            service:
+              name: frontend
+              port:
+                number: 8050

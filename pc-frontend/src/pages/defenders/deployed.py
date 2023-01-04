@@ -11,7 +11,12 @@ from direct_redis import DirectRedis
 register_page(__name__, icon="fa:bar-chart")
 
 redis_conn = DirectRedis(host='cache', port=6379)
-df = redis_conn.get('df_all_defenders')
+try:
+    df = redis_conn.get('df_all_defenders')
+except:
+    data_list = [['','','','','']]
+    df = pd.DataFrame(
+        data_list, columns=['category', 'date_added', 'version', 'connected', 'accountID']) 
 all_versions = numpy.sort(df.version.unique())
 all_accounts = numpy.sort(df.accountID.unique())
 layout = html.Div(

@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: jtb75/pc-frontend:latest
+          imagePullPolicy: "Always"
+          ports:
+            - containerPort: 5050  # Exposes container port
+          envFrom:
+            - configMapRef:
+                name: historical-db-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend # Sets service name
+  labels:
+    app: frontend # Labels and Selectors
+spec:
+  type:  ClusterIP # Sets service type
+  ports:
+    - port: 5050 # Sets port to run the postgres application
+  selector:
+    app: frontend

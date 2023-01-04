@@ -11,9 +11,9 @@ def db_connect():
     try:
         conn = psycopg2.connect(
             host='historical-db',
-            database='prisma',
-            user=os.environ['DB_USER'],
-            password=os.environ['DB_PASSWORD']
+            database=os.environ['POSTGRES_DB'],
+            user=os.environ['POSTGRES_USER'],
+            password=os.environ['POSTGRES_PASSWORD']
         )
     except (Exception, psycopg2.DatabaseError) as msg:
         print("Error in db_connect function:")

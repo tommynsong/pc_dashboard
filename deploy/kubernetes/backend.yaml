@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: jtb75/pc-backend:latest
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 5050  # Exposes container port
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend # Sets service name
+  labels:
+    app: backend # Labels and Selectors
+spec:
+  type:  ClusterIP # Sets service type
+  ports:
+    - port: 5050 # Sets port to run the postgres application
+  selector:
+    app: backend

@@ -1,0 +1,89 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: historical-db-config
+  labels:
+    app: historical-db
+data:
+  POSTGRES_DB: prisma
+  POSTGRES_USER: prisma
+  POSTGRES_PASSWORD: prisma
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: historical-db  # Sets Deployment name
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: historical-db
+  template:
+    metadata:
+      labels:
+        app: historical-db
+    spec:
+      containers:
+        - name: historical-db
+          image: jtb75/pc-postgres:latest
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 5432  # Exposes container port
+          envFrom:
+            - configMapRef:
+                name: historical-db-config
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgredb
+              subPath: postgres
+      volumes:
+        - name: postgredb
+          persistentVolumeClaim:
+            claimName: historical-db-pv-claim
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: historical-db-pv-volume
+  labels:
+    type: efs
+    app: historical-db
+spec:
+  capacity:
+    storage: 5Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: efs-sc
+  csi:
+    driver: efs.csi.aws.com
+    volumeHandle: fs-056e6243c09496444
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: historical-db-pv-claim  # Sets name of PVC
+  labels:
+    app: historical-db
+spec:
+  storageClassName: efs-sc
+  accessModes:
+    - ReadWriteMany  # Sets read and write access
+  resources:
+    requests:
+      storage: 5Gi  # Sets volume size
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: historical-db # Sets service name
+  labels:
+    app: historical-db # Labels and Selectors
+spec:
+  type:  ClusterIP # Sets service type
+  ports:
+    - port: 5432 # Sets port to run the postgres application
+  selector:
+    app: historical-db
+---

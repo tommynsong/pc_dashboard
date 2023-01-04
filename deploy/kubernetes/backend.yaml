@@ -15,7 +15,7 @@ spec:
       containers:
         - name: backend
           image: jtb75/pc-backend:latest
-          imagePullPolicy: "IfNotPresent"
+          imagePullPolicy: "Always"
           ports:
             - containerPort: 5050  # Exposes container port
           envFrom:

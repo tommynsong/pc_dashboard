@@ -102,7 +102,7 @@ def update_url(n):
     if n < 0:
         raise PreventUpdate
     pc_status="Unsuccessful"
-    response = requests.get('http://localhost:5050/api/prismasettings')
+    response = requests.get('http://backend:5050/api/prismasettings')
     if response.text != '':
         settings = response.json()
         pc_url = settings["apiurl"]
@@ -115,7 +115,7 @@ def update_url(n):
         }
         jsondata = json.dumps(data)
         response = requests.post(
-            'http://localhost:5050/api/prismastatus', json=jsondata
+            'http://backend:5050/api/prismastatus', json=jsondata
         )
         settings = response.json()
         if response.status_code == 200:
@@ -146,5 +146,5 @@ def update_api_settings(n_clicks, new_pc_url, new_pc_key, new_pc_secret):
             }
             jsondata = json.dumps(data)
             r = requests.post(
-                'http://localhost:5050/api/prismasettings', json=jsondata)
+                'http://backend:5050/api/prismasettings', json=jsondata)
         return "settings/prismacloud"

@@ -8,6 +8,11 @@ import requests
 
 def db_connect():
     conn = None
+    print(
+            database=os.environ['POSTGRES_DB'],
+            user=os.environ['POSTGRES_USER'],
+            password=os.environ['POSTGRES_PASSWORD']
+    )
     try:
         conn = psycopg2.connect(
             host='historical-db',

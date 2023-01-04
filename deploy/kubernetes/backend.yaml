@@ -18,6 +18,9 @@ spec:
           imagePullPolicy: "IfNotPresent"
           ports:
             - containerPort: 5050  # Exposes container port
+          envFrom:
+            - configMapRef:
+                name: historical-db-config
 ---
 apiVersion: v1
 kind: Service

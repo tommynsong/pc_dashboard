@@ -5,19 +5,22 @@ from flask import Flask, request
 import json
 import sys
 import requests
+import time
+import logging
 
 def db_connect():
     conn = None
     try:
         conn = psycopg2.connect(
-            host='historical-db',
+            host='postgres-edw',
             database=os.environ['POSTGRES_DB'],
             user=os.environ['POSTGRES_USER'],
             password=os.environ['POSTGRES_PASSWORD']
         )
     except (Exception, psycopg2.DatabaseError) as msg:
         print("Error in db_connect function:")
-        sys.exit(msg)
+        print(msg)
+        return(1)
     return conn
 
 def init_settings():
@@ -35,8 +38,11 @@ def init_settings():
             cursor.execute(create_table_sql)
     return 0
 
-
 connection = db_connect()
+while connection == 1:
+    time.sleep(5)
+    connection = db_connect()
+
 init_settings()
 app = Flask(__name__)
 
@@ -107,4 +113,6 @@ def get_settings():
 
 if __name__ == "__main__":
     from waitress import serve
+    logger = logging.getLogger('waitress')
+    logger.setLevel(logging.DEBUG)
     serve(app, host="0.0.0.0", port=5050)

@@ -1,12 +1,14 @@
+'''Serves API endpoints for front to back end interactions'''
 import os
-import psycopg2
-from dotenv import load_dotenv
-from flask import Flask, request
-import json
-import sys
-import requests
 import time
 import logging
+import json
+import requests
+import psycopg2
+# from dotenv import load_dotenv
+from flask import Flask, request
+# import sys
+
 
 def db_connect():
     conn = None
@@ -20,8 +22,9 @@ def db_connect():
     except (Exception, psycopg2.DatabaseError) as msg:
         print("Error in db_connect function:")
         print(msg)
-        return(1)
+        return (1)
     return conn
+
 
 def init_settings():
     create_table_sql = """
@@ -38,6 +41,7 @@ def init_settings():
             cursor.execute(create_table_sql)
     return 0
 
+
 connection = db_connect()
 while connection == 1:
     time.sleep(5)
@@ -45,6 +49,7 @@ while connection == 1:
 
 init_settings()
 app = Flask(__name__)
+
 
 @app.post("/api/prismastatus")
 def prisma_status():
@@ -55,12 +60,11 @@ def prisma_status():
         "password": data["apisecret"],
     }
     headers = {"content-type": "application/json; charset=UTF-8"}
-    response = requests.request("POST", pc_url, json=payload, headers=headers)
+    response = requests.post(pc_url, json=payload, headers=headers, timeout=10)
     if response.status_code == 200:
         return ({"id": 1, "message": "Successful Connection"}, 200)
     else:
         return ({"id": 1, "message": "Unsuccessful Connection"}, response.status_code)
-
 
 
 @app.post("/api/prismasettings")
@@ -91,7 +95,7 @@ def update_settings():
                 cursor.execute(update_pc_settings, (pc_url, pc_key, pc_secret))
             else:
                 cursor.execute(add_pc_settings, ('prisma',
-                           pc_url, pc_key, pc_secret,))
+                                                 pc_url, pc_key, pc_secret,))
     return ({"id": 1, "message": "Room created."}, 201)
 
 
@@ -110,6 +114,7 @@ def get_settings():
                 return ({"apiurl": row[0], "apikey": row[1], "apisecret": row[2]}, 201)
             else:
                 return ('', 204)
+
 
 if __name__ == "__main__":
     from waitress import serve

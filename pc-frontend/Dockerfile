@@ -4,4 +4,4 @@ WORKDIR /app
 RUN pip install -r requirements.txt
 COPY ./src/. /app
 ENTRYPOINT [ "gunicorn" ]
-CMD ["frontent:server", "-b", "0.0.0.0:8050" ]
+CMD ["frontend:server", "-b", "0.0.0.0:8050" ]

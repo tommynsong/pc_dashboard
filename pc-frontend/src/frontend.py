@@ -1,12 +1,14 @@
 import dash
 from dash import dcc
+import flask
 import dash_mantine_components as dmc
 from dash_iconify import DashIconify
 # import dash_auth
 
 # VALID_USERNAME_PASSWORD_PAIRS = {"hello": "world"}
 
-app = dash.Dash(__name__, use_pages=True)
+server = flask.Flask(__name__)
+app = dash.Dash(__name__, server=server, use_pages=True)
 
 # auth = dash_auth.BasicAuth(app, VALID_USERNAME_PASSWORD_PAIRS)
 

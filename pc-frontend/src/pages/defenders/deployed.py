@@ -11,7 +11,6 @@ from direct_redis import DirectRedis
 register_page(__name__, icon="fa:bar-chart")
 
 try:
-    print("1")
     redis_conn = DirectRedis(host='redis-cache', port=6379)
     df = redis_conn.get('df_all_defenders')
 except:

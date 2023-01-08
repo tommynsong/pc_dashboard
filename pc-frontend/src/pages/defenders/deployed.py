@@ -11,19 +11,20 @@ from direct_redis import DirectRedis
 register_page(__name__, icon="fa:bar-chart")
 
 try:
+    print("1")
     redis_conn = DirectRedis(host='redis-cache', port=6379)
-except:
-    data_list = [['','','','','']]
-    df = pd.DataFrame(
-        data_list, columns=['category', 'date_added', 'version', 'connected', 'accountID']) 
-try:
     df = redis_conn.get('df_all_defenders')
 except:
-    data_list = [['','','','','']]
+    data_list = [['', '', '', '', '']]
     df = pd.DataFrame(
-        data_list, columns=['category', 'date_added', 'version', 'connected', 'accountID']) 
-all_versions = numpy.sort(df.version.unique())
-all_accounts = numpy.sort(df.accountID.unique())
+        data_list, columns=['category', 'date_added', 'version', 'connected', 'accountID'])
+
+if df != None:
+    all_versions = numpy.sort(df.version.unique())
+    all_accounts = numpy.sort(df.accountID.unique())
+else:
+    all_versions = ['none']
+    all_accounts = ['none']
 layout = html.Div(
     [
         dmc.Text("Accounts:"),

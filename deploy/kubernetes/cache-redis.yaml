@@ -1,36 +1,33 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: cache
+  name: redis-cache
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: cache
+      app: redis-cache
   template:
     metadata:
       labels:
-        app: cache
+        app: redis-cache
     spec:
       containers:
-        - name: cache
+        - name: redis-cache
           image: jtb75/pc-cache:latest
           imagePullPolicy: "Always"
           ports:
             - containerPort: 6379  # Exposes container port
-          envFrom:
-            - configMapRef:
-                name: historical-db-config
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: cache # Sets service name
+  name: redis-cache # Sets service name
   labels:
-    app: cache # Labels and Selectors
+    app: redis-cache # Labels and Selectors
 spec:
   type:  ClusterIP # Sets service type
   ports:
     - port: 6379 
   selector:
-    app: cache
+    app: redis-cache

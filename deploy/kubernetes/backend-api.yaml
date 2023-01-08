@@ -1,36 +1,36 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: backend
+  name: backend-api
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: backend
+      app: backend-api
   template:
     metadata:
       labels:
-        app: backend
+        app: backend-api
     spec:
       containers:
-        - name: backend
+        - name: backend-api
           image: jtb75/pc-backend:latest
           imagePullPolicy: "Always"
           ports:
             - containerPort: 5050  # Exposes container port
           envFrom:
             - configMapRef:
-                name: historical-db-config
+                name: postgres-edw-config
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: backend # Sets service name
+  name: backend-api
   labels:
-    app: backend # Labels and Selectors
+    app: backend-api
 spec:
-  type:  ClusterIP # Sets service type
+  type:  ClusterIP
   ports:
-    - port: 5050 # Sets port to run the postgres application
+    - port: 5050
   selector:
-    app: backend
+    app: backend-api

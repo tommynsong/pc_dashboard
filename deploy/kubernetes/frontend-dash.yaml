@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend
+  name: frontend-dash
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: frontend
+      app: frontend-dash
   template:
     metadata:
       labels:
-        app: frontend
+        app: frontend-dash
     spec:
       containers:
-        - name: frontend
+        - name: frontend-dash
           image: jtb75/pc-frontend:latest
           imagePullPolicy: "Always"
           ports:
@@ -22,20 +22,20 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: frontend # Sets service name
+  name: frontend-dash # Sets service name
   labels:
-    app: frontend # Labels and Selectors
+    app: frontend-dash # Labels and Selectors
 spec:
   type:  ClusterIP # Sets service type
   ports:
     - port: 8050 
   selector:
-    app: frontend
+    app: frontend-dash
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: frontend
+  name: frontend-dash
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
@@ -47,6 +47,6 @@ spec:
           pathType: Prefix
           backend:
             service:
-              name: frontend
+              name: frontend-dash
               port:
                 number: 8050

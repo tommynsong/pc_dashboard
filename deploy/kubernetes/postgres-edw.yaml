@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: historical-db-config
+  name: postgres-edw-config
   labels:
-    app: historical-db
+    app: postgres-edw
 data:
   POSTGRES_DB: prisma
   POSTGRES_USER: prisma
@@ -12,26 +12,26 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: historical-db  # Sets Deployment name
+  name: postgres-edw  # Sets Deployment name
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: historical-db
+      app: postgres-edw
   template:
     metadata:
       labels:
-        app: historical-db
+        app: postgres-edw
     spec:
       containers:
-        - name: historical-db
+        - name: postgres-edw
           image: jtb75/pc-postgres:latest
           imagePullPolicy: "IfNotPresent"
           ports:
             - containerPort: 5432  # Exposes container port
           envFrom:
             - configMapRef:
-                name: historical-db-config
+                name: postgres-edw-config
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
               name: postgredb
@@ -39,15 +39,15 @@ spec:
       volumes:
         - name: postgredb
           persistentVolumeClaim:
-            claimName: historical-db-pv-claim
+            claimName: postgres-edw-pv-claim
 ---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: historical-db-pv-volume
+  name: postgres-edw-pv-volume
   labels:
     type: efs
-    app: historical-db
+    app: postgres-edw
 spec:
   capacity:
     storage: 5Gi
@@ -63,9 +63,9 @@ spec:
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: historical-db-pv-claim  # Sets name of PVC
+  name: postgres-edw-pv-claim  # Sets name of PVC
   labels:
-    app: historical-db
+    app: postgres-edw
 spec:
   storageClassName: efs-sc
   accessModes:
@@ -77,13 +77,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: historical-db # Sets service name
+  name: postgres-edw # Sets service name
   labels:
-    app: historical-db # Labels and Selectors
+    app: postgres-edw # Labels and Selectors
 spec:
   type:  ClusterIP # Sets service type
   ports:
     - port: 5432 # Sets port to run the postgres application
   selector:
-    app: historical-db
+    app: postgres-edw
 ---

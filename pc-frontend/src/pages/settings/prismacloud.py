@@ -9,10 +9,10 @@ from dash.exceptions import PreventUpdate
 register_page(__name__, icon="fa:wrench")
 
 layout = html.Div([
-        html.Div(dmc.TextInput(
+    html.Div(dmc.TextInput(
         id="api_url", label="API URL:", style={"width": 330},
         placeholder="https://api.prismacloud.io", value="")),
-    html.Div(dmc.TextInput(
+    html.Div(dmc.PasswordInput(
         id="api_key", label="API Key:", style={"width": 330},
         value="")),
     html.Div(dmc.PasswordInput(
@@ -28,6 +28,7 @@ layout = html.Div([
     dmc.Space(h=30),
     html.Div(id="status")
 ])
+
 
 @callback(
     [Output('api_url', 'value')],
@@ -48,10 +49,11 @@ def load_data(clear_button, load_button, test_button, save_button, api_url, api_
     if button_id is None:
         raise PreventUpdate
     elif button_id == 'clear_button':
-        return '','','',''
+        return '', '', '', ''
     elif button_id == 'load_button':
         try:
-            response = requests.get('http://backend-api:5050/api/prismasettings')
+            response = requests.get(
+                'http://backend-api:5050/api/prismasettings')
             if response.status_code == 201:
                 msg = "Successful Backend Connection"
                 if response.text != '':
@@ -64,7 +66,7 @@ def load_data(clear_button, load_button, test_button, save_button, api_url, api_
             else:
                 msg = "Could not load settings"
         except:
-            return '','','','Could not connect with Backend'
+            return '', '', '', 'Could not connect with Backend'
         return api_url, api_key, api_secret, msg
     elif button_id == 'test_button':
         jsondata = json.dumps({
@@ -77,7 +79,7 @@ def load_data(clear_button, load_button, test_button, save_button, api_url, api_
         else:
             response = requests.post(
                 'http://backend-api:5050/api/prismastatus', json=jsondata
-        )
+            )
         if response.status_code == 200:
             return api_url, api_key, api_secret, 'Successful test'
         else:
@@ -93,10 +95,10 @@ def load_data(clear_button, load_button, test_button, save_button, api_url, api_
         else:
             response = requests.post(
                 'http://backend-api:5050/api/prismasettings', json=jsondata
-        )
+            )
         if response.status_code == 201:
             return api_url, api_key, api_secret, 'Successful update'
         else:
             return api_url, api_key, api_secret, 'Unsuccessful update'
     else:
-        return '','','','Unexpected input'
+        return '', '', '', 'Unexpected input'

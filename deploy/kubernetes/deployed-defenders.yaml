@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployed-defenders
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: deployed-defenders
+  template:
+    metadata:
+      labels:
+        app: deployed_defenders
+    spec:
+      containers:
+        - name: deployed_defenders
+          image: jtb75/pc-deployed_defenders:latest
+          imagePullPolicy: "Always"
+          envFrom:
+            - configMapRef:
+                name: postgres-edw-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: deployed_defenders
+  labels:
+    app: deployed_defenders
+spec:
+  type:  ClusterIP
+  selector:
+    app: deployed_defenders

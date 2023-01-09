@@ -5,9 +5,8 @@ import logging
 import json
 import requests
 import psycopg2
-# from dotenv import load_dotenv
+import psycopg2.extras
 from flask import Flask, request
-# import sys
 
 
 def db_connect():
@@ -67,6 +66,28 @@ def prisma_status():
         return ({"id": 1, "message": "Unsuccessful Connection"}, response.status_code)
 
 
+@app.post("/api/etljobs")
+def update_etl_jobs():
+    data = json.loads(request.get_json())
+    conn_name = data["conn_name"]
+    conn_since = data["conn_since"]
+    next_run = data["next_run"]
+    last_run = data["last_run"]
+    elapsed = data["elapsed"]
+    retention = data["retention"]
+    int_time = data["int_time"]
+    sql = """
+        INSERT INTO reporting.etl_jobs (conn_name, conn_since, last_run,
+        next_run, elapsed, retention, int_time) VALUES (%s, %s, %s, %s, %s, %s, %s);
+    """
+    with connection:
+        with connection.cursor() as cursor:
+            cursor.execute(sql, (conn_name, conn_since,
+                           last_run, next_run, elapsed,
+                           retention, int_time))
+    return ({"id": 1, "message": "Connection added."}, 201)
+
+
 @app.post("/api/prismasettings")
 def update_settings():
     data = json.loads(request.get_json())
@@ -114,6 +135,28 @@ def get_settings():
                 return ({"apiurl": row[0], "apikey": row[1], "apisecret": row[2]}, 201)
             else:
                 return ('', 204)
+
+
+@app.get("/api/etljobs")
+def get_etl_jobs():
+    args = request.args
+    etl_name = args.get('etl_name')
+    with connection:
+        with connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
+            if etl_name is None:
+                #sql = "SELECT jsonb_agg(to_jsonb(l)) FROM reporting.etl_jobs l"
+                sql = "SELECT * FROM reporting.etl_jobs"
+            else:
+                sql = """SELECT * FROM reporting.etl_jobs
+                    WHERE conn_name = \'""" + etl_name + "\'"
+                # sql = """SELECT jsonb_agg(to_jsonb(l)) FROM reporting.etl_jobs l
+                #    WHERE conn_name = \'""" + etl_name + "\'"
+            cursor.execute(sql)
+            records = cursor.fetchall()
+            if records:
+                return records, 201
+            else:
+                return '', 204
 
 
 if __name__ == "__main__":

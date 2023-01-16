@@ -26,7 +26,7 @@ spec:
       containers:
         - name: postgres-edw
           image: jtb75/pc-postgres:latest
-          imagePullPolicy: "IfNotPresent"
+          imagePullPolicy: "Always"
           ports:
             - containerPort: 5432  # Exposes container port
           envFrom:

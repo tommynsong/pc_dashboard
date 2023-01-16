@@ -53,7 +53,7 @@ def load_data(clear_button, load_button, test_button, save_button, api_url, api_
     elif button_id == 'load_button':
         try:
             response = requests.get(
-                'http://backend-api:5050/api/prismasettings')
+                'http://backend-api:5050/api/prismasettings', timeout=10)
             if response.status_code == 201:
                 msg = "Successful Backend Connection"
                 if response.text != '':
@@ -78,7 +78,8 @@ def load_data(clear_button, load_button, test_button, save_button, api_url, api_
             return api_url, api_key, api_secret, 'Complete all field entries'
         else:
             response = requests.post(
-                'http://backend-api:5050/api/prismastatus', json=jsondata
+                'http://backend-api:5050/api/prismastatus', json=jsondata,
+                timeout=10
             )
         if response.status_code == 200:
             return api_url, api_key, api_secret, 'Successful test'
@@ -94,7 +95,8 @@ def load_data(clear_button, load_button, test_button, save_button, api_url, api_
             return api_url, api_key, api_secret, 'Complete all field entries'
         else:
             response = requests.post(
-                'http://backend-api:5050/api/prismasettings', json=jsondata
+                'http://backend-api:5050/api/prismasettings', json=jsondata,
+                timeout=10
             )
         if response.status_code == 201:
             return api_url, api_key, api_secret, 'Successful update'

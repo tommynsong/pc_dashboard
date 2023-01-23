@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: defenders-coverage
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: defenders-coverage
+  template:
+    metadata:
+      labels:
+        app: defenders-coverage
+    spec:
+      containers:
+        - name: defenders-coverage
+          image: jtb75/pc-defenders-coverage:latest
+          imagePullPolicy: "Always"
+          ports:
+          envFrom:
+            - configMapRef:
+                name: postgres-edw-config
+---

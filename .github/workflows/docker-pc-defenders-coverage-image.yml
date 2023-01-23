@@ -1,0 +1,31 @@
+name: PC Defenders Coverage Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: docker login
+      env:
+        DOCKER_USER: ${{ secrets.DOCKERHUB_USER }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_SECRET }}
+      run: |
+        docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+        echo "TAG=`date +%Y.%m.%d.%H.%M.%S`" >> $GITHUB_ENV
+    - name: Build the Docker image
+      working-directory: ./pc-defenders-coverage
+      run: |
+        docker build . --file Dockerfile --tag jtb75/pc-defenders-coverage:$TAG --tag jtb75/pc-defenders-coverage:latest
+    - name: Push the Docker image
+      run: |
+        docker push jtb75/pc-defenders-coverage:$TAG
+        docker push jtb75/pc-defenders-coverage:latest

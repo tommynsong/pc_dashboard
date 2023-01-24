@@ -1,1 +1,4 @@
 FROM redis:latest
+LABEL org.opencontainers.image.authors="nospam.joe@gmail.com"
+LABEL org.opencontainers.image.source="https://github.com/jtb75/pc_dashboard/tree/main/pc-cache"
+LABEL org.opencontainers.image.vendor="jtb75"

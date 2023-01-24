@@ -67,7 +67,7 @@ def init_coverage(conn):
         registry varchar (128) NOT NULL,
         credential varchar (64) NOT NULL,
         accountID varchar (64),
-        name varchar (128),
+        name varchar (256),
         vminstance varchar (256),
         defended boolean NOT NULL,
         runtime varchar (16),
@@ -300,7 +300,6 @@ def write_to_redis(rd_var, working_df):
     '''
     logging.info('Creating connection to redis cache')
     redis_conn = DirectRedis(host=REDIS_CACHE, port=6379)
-    logging.info('Pushing rollup dataframe into cache')
     while True:
         try:
             redis_conn.set(rd_var,

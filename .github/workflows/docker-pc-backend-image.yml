@@ -29,7 +29,7 @@ jobs:
       working-directory: ./pc-backend
       run: |
         curl -X GET -u ${{ secrets.PCC_USER }}:${{ secrets.PCC_SECRET }} ${{ secrets.PCC_CONSOLE_URL }}/api/v1/util/twistcli > twistcli; chmod a+x twistcli;
-        #./twistcli images scan -u $PCC_USER -p $PCC_SECRET --address $PCC_CONSOLE_URL --details jtb75/pc-backend:$TAG
+        ./twistcli images scan -u ${{ secrets.PCC_USER }} -p ${{ secrets.PCC_SECRET }} --address ${{ secrets.PCC_CONSOLE_URL }} --details jtb75/pc-backend:$TAG
     - name: Push the Docker image
       run: |
         docker push jtb75/pc-backend:$TAG

@@ -25,6 +25,11 @@ jobs:
       working-directory: ./pc-cache/container
       run: |
         docker build . --file Dockerfile --tag jtb75/pc-cache:$TAG --tag jtb75/pc-cache:latest
+    - name: Scan the Docker Image
+      working-directory: ./pc-cache
+      run: |
+        curl -X GET -u ${{ secrets.PCC_USER }}:${{ secrets.PCC_SECRET }} ${{ secrets.PCC_CONSOLE_URL }}/api/v1/util/twistcli > twistcli; chmod a+x twistcli;
+        ./twistcli images scan -u ${{ secrets.PCC_USER }} -p ${{ secrets.PCC_SECRET }} --address ${{ secrets.PCC_CONSOLE_URL }} --details jtb75/pc-cache:$TAG
     - name: Push the Docker image
       run: |
         docker push jtb75/pc-cache:$TAG

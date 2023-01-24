@@ -18,6 +18,7 @@ import json
 import pandas as pd
 import psycopg2
 import requests
+from direct_redis import DirectRedis
 from prismacloud.api import pc_api
 
 logging.basicConfig(
@@ -25,6 +26,7 @@ logging.basicConfig(
 
 ETL_NAME = 'defenders_coverage'
 BACKEND_API = 'http://backend-api:5050'
+REDIS_CACHE = 'redis-cache'
 RETENTION = 35
 RUN_INTERVAL = 7
 INTERVAL = 60
@@ -267,6 +269,10 @@ def purge_data(retention):
 
 
 def get_coverage_df():
+    '''
+    Pull down coverage CSV from endpoint, drop a few
+    columns, then return as dataframe.
+    '''
     logging.info('Retrieving coverage as a CSV')
     date_added = [datetime.now().strftime("%Y-%m-%d")]
     buffer = io.StringIO(pc_api.cloud_discovery_download())
@@ -285,6 +291,28 @@ def get_coverage_df():
     coverage_df.drop('Nodes', axis=1, inplace=True)
     coverage_df['date_added'] = date_added[0]
     return coverage_df
+
+
+def write_to_redis(rd_var, working_df):
+    '''
+    Receives the name of variable to store in redis cache
+    plus the actual dataframe and writes to cache.
+    '''
+    logging.info('Creating connection to redis cache')
+    redis_conn = DirectRedis(host=REDIS_CACHE, port=6379)
+    logging.info('Pushing rollup dataframe into cache')
+    while True:
+        try:
+            redis_conn.set(rd_var,
+                           working_df)
+            break
+        except Exception as ex:
+            logging.error(
+                ex.args[0])
+            time.sleep(5)
+    logging.info(
+        'Successfully stored dataframe in redis cache')
+    return True
 
 
 def df_to_db(df_to_write):
@@ -350,8 +378,11 @@ def main():
 
                 # Get coverage information, store as dataframe
                 # then write to DB
-                coverage_df = get_coverage_df()
-                df_to_db(coverage_df)
+                curr_coverage_df = get_coverage_df()
+                df_to_db(curr_coverage_df)
+
+                # Gather relevant data and store in redis as dataframe
+                write_to_redis('curr_coverage', curr_coverage_df)
 
                 # Store time of current run in elapsed for ETL job
                 elapsed = time.strftime(
@@ -362,7 +393,7 @@ def main():
                 next_run = dt_start_time + timedelta(run_interval)
 
                 # Update ETL job with new elapsed and next_run values
-                #update_etl(dt_start_time, elapsed, next_run)
+                update_etl(dt_start_time, elapsed, next_run)
 
         logging.info('Sleeping for %s', INTERVAL)
         time.sleep(INTERVAL)

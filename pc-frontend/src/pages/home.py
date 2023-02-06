@@ -16,8 +16,6 @@ layout = dmc.Container(
             - Defenders
                 |-- Coverage   # Shows current deployed Defenders and Coverage Gaps
                 |-- Deployed   # Shows current Defender deployment by version, type, and account
-            - Vulnerabilities
-                |-- Registries # Shows historical vulnerability details by Repo and tag within Registries
             ```
             
             Offered without warranty.

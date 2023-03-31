@@ -35,6 +35,6 @@ ua-parser==0.16.1
 urllib3==1.26.13
 uWSGI==2.0.21
 waitress==2.1.2
-Werkzeug==2.2.2
+Werkzeug==2.2.3
 zipp==3.11.0
 setuptools==65.5.1

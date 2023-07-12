@@ -24,13 +24,13 @@ jobs:
     - name: Build the Docker image
       working-directory: ./pc-frontend
       run: |
-        docker build . --file Dockerfile --tag jtb75/pc-frontend:$TAG --tag jtb75/pc-frontend:latest
+        docker build . --file Dockerfile --tag focer/pc-frontend:$TAG --tag focer/pc-frontend:latest
     - name: Scan the Docker Image
       working-directory: ./pc-frontend
       run: |
         curl -X GET -u ${{ secrets.PCC_USER }}:${{ secrets.PCC_SECRET }} ${{ secrets.PCC_CONSOLE_URL }}/api/v1/util/twistcli > twistcli; chmod a+x twistcli;
-        ./twistcli images scan -u ${{ secrets.PCC_USER }} -p ${{ secrets.PCC_SECRET }} --address ${{ secrets.PCC_CONSOLE_URL }} --details jtb75/pc-frontend:$TAG
+        ./twistcli images scan -u ${{ secrets.PCC_USER }} -p ${{ secrets.PCC_SECRET }} --address ${{ secrets.PCC_CONSOLE_URL }} --details focer/pc-frontend:$TAG
     - name: Push the Docker image
       run: |
-        docker push jtb75/pc-frontend:$TAG
-        docker push jtb75/pc-frontend:latest
+        docker push focer/pc-frontend:$TAG
+        docker push focer/pc-frontend:latest

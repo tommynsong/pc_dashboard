@@ -24,7 +24,7 @@ jobs:
     - name: Build the Docker image
       working-directory: ./pc-backend
       run: |
-        docker build . --file Dockerfile --tag jtb75/pc-backend:$TAG --tag focer/pc-backend:latest
+        docker build . --file Dockerfile --tag focer/pc-backend:$TAG --tag focer/pc-backend:latest
     - name: Scan the Docker Image
       working-directory: ./pc-backend
       run: |

@@ -25,11 +25,25 @@ jobs:
       working-directory: ./pc-backend
       run: |
         docker build . --file Dockerfile --tag focer/pc-backend:$TAG --tag focer/pc-backend:latest
+    # - name: Prisma Cloud image scan
+    #   id: scan
+    #   uses: PaloAltoNetworks/prisma-cloud-scan@v1
+    #   with:
+    #     pcc_console_url: ${{ secrets.PCC_CONSOLE_URL }}
+    #     pcc_user: ${{ secrets.PCC_USER }}
+    #     pcc_pass: ${{ secrets.PCC_SECRET }}
+    #     image_name: ${{ env.IMAGE_NAME }}
     - name: Scan the Docker Image
       working-directory: ./pc-backend
       run: |
         curl -X GET -u ${{ secrets.PCC_USER }}:${{ secrets.PCC_SECRET }} ${{ secrets.PCC_CONSOLE_URL }}/api/v1/util/twistcli > twistcli; chmod a+x twistcli;
         ./twistcli images scan -u ${{ secrets.PCC_USER }} -p ${{ secrets.PCC_SECRET }} --address ${{ secrets.PCC_CONSOLE_URL }} --details focer/pc-backend:$TAG
+    # (Optional) for compatibility with GitHub's code scanning alerts
+    - name: Upload SARIF file
+      if: ${{ always() }} # necessary if using failure thresholds in the image scan
+      uses: github/codeql-action/upload-sarif@v1
+      with:
+        sarif_file: ${{ steps.scan.outputs.sarif_file }}
     - name: Push the Docker image
       run: |
         docker push focer/pc-backend:$TAG

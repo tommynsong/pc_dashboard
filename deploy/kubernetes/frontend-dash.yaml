@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: frontend-dash
-          image: jtb75/pc-frontend:latest
+          image: focer/pc-frontend:latest
           imagePullPolicy: "Always"
           ports:
             - containerPort: 8050  # Exposes container port

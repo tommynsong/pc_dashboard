@@ -4,8 +4,8 @@ WORKDIR /app
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 COPY ./src/. /app
-LABEL org.opencontainers.image.authors="nospam.joe@gmail.com"
-LABEL org.opencontainers.image.source="https://github.com/jtb75/pc_dashboard/tree/main/pc-defenders-coverage"
-LABEL org.opencontainers.image.vendor="jtb75"
+LABEL org.opencontainers.image.authors="spamblackhole.tommy@gmail.com"
+LABEL org.opencontainers.image.source="https://github.com/tommynsong/pc_dashboard/tree/main/pc-defenders-coverage"
+LABEL org.opencontainers.image.vendor="focer"
 ENTRYPOINT [ "python" ]
 CMD ["app.py" ]

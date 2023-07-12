@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: backend-api
-          image: jtb75/pc-backend:latest
+          image: focer/pc-backend:latest
           imagePullPolicy: "Always"
           ports:
             - containerPort: 5050  # Exposes container port

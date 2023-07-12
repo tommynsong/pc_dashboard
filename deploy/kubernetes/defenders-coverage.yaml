@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: defenders-coverage
-          image: jtb75/pc-defenders-coverage:latest
+          image: focer/pc-defenders-coverage:latest
           imagePullPolicy: "Always"
           ports:
           envFrom:

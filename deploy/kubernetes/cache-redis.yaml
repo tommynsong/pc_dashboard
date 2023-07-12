@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: redis-cache
-          image: jtb75/pc-cache:latest
+          image: focer/pc-cache:latest
           imagePullPolicy: "Always"
           ports:
             - containerPort: 6379  # Exposes container port

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: defenders-deployed
-          image: jtb75/pc-defenders-deployed:latest
+          image: focer/pc-defenders-deployed:latest
           imagePullPolicy: "Always"
           ports:
           envFrom:

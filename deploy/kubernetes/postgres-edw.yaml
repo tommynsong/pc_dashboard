@@ -25,7 +25,7 @@ spec:
     spec:
       containers:
         - name: postgres-edw
-          image: jtb75/pc-postgres:latest
+          image: focer/pc-postgres:latest
           imagePullPolicy: "Always"
           ports:
             - containerPort: 5432  # Exposes container port

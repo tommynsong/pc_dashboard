@@ -1,2 +1,2 @@
 # pc_dashboard
-sample app
+sample app for live demo
